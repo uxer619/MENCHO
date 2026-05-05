@@ -1,0 +1,9 @@
+{
+  "name": "jarvis-ai",
+  "version": "1.0.0",
+  "description": "JARVIS AI Assistant powered by Groq",
+  "main": "api/chat.js",
+  "engines": {
+    "node": "18.x"
+  }
+}
