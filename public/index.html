@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>M.E.N.C.H.O</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --hud: #ff6b00;
+    --hud2: #ff9a3c;
+    --red: #ff3c3c;
+    --green: #39ff14;
+    --bg: #0a0500;
+    --panel: rgba(255,107,0,0.04);
+    --border: rgba(255,107,0,0.18);
+    --glow: 0 0 18px rgba(255,107,0,0.55);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--hud);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,107,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,107,0,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridPan 20s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes gridPan { from{background-position:0 0} to{background-position:40px 40px} }
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+.wrapper {
+position: relative; z-index: 1;
+max-width: 860px;
+margin: 0 auto;
+padding: 20px 14px 100px;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 18px;
+}
+
+/* HEADER */
+.header { width: 100%; text-align: center; }
+.logo {
+font-family: ‘Orbitron’, sans-serif;
+font-weight: 900;
+font-size: clamp(1.8rem, 8vw, 3.2rem);
+letter-spacing: 0.3em;
+color: var(–hud);
+text-shadow: 0 0 30px var(–hud), 0 0 60px rgba(255,107,0,0.4);
+animation: pulseGlow 3s ease-in-out infinite;
+}
+@keyframes pulseGlow {
+0%,100% { text-shadow: 0 0 30px var(–hud), 0 0 60px rgba(255,107,0,0.4); }
+50% { text-shadow: 0 0 50px var(–hud), 0 0 100px rgba(255,107,0,0.7); }
+}
+.subtitle { font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(255,107,0,0.45); margin-top: 4px; }
+
+/* FLAG STRIPE */
+.flag-stripe {
+width: 100%;
+height: 4px;
+background: linear-gradient(90deg, #006847 33%, #fff 33%, #fff 66%, #ce1126 66%);
+opacity: 0.4;
+}
+
+/* CORE */
+.arc-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.arc {
+width: 110px; height: 110px;
+position: relative; cursor: pointer;
+transition: transform 0.2s;
+-webkit-tap-highlight-color: transparent;
+}
+.arc:active { transform: scale(0.95); }
+.arc-ring {
+position: absolute; inset: 0;
+border-radius: 50%;
+border: 2px solid transparent;
+animation: spin 4s linear infinite;
+}
+.arc-ring:nth-child(1) { border-top-color: var(–hud); border-right-color: rgba(255,107,0,0.3); animation-duration: 3s; }
+.arc-ring:nth-child(2) { inset: 10px; border-bottom-color: var(–hud2); border-left-color: rgba(255,107,0,0.2); animation-duration: 2s; animation-direction: reverse; }
+.arc-ring:nth-child(3) { inset: 22px; border-top-color: rgba(255,107,0,0.6); animation-duration: 5s; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+.arc-core {
+position: absolute; inset: 30px;
+border-radius: 50%;
+background: radial-gradient(circle, rgba(255,107,0,0.9) 0%, rgba(180,60,0,0.6) 50%, rgba(40,10,0,0.8) 100%);
+box-shadow: 0 0 20px var(–hud), 0 0 40px rgba(255,107,0,0.5), inset 0 0 20px rgba(255,107,0,0.3);
+display: flex; align-items: center; justify-content: center;
+font-family: ‘Orbitron’, sans-serif; font-size: 0.38rem; letter-spacing: 0.1em; color: white;
+animation: coreBreath 2s ease-in-out infinite;
+transition: all 0.3s;
+}
+.arc-core.listening {
+box-shadow: 0 0 30px var(–red), 0 0 60px rgba(255,60,60,0.6), inset 0 0 20px rgba(255,60,60,0.3);
+background: radial-gradient(circle, rgba(255,100,100,0.9) 0%, rgba(180,40,40,0.6) 50%, rgba(40,0,0,0.8) 100%);
+}
+.arc-core.speaking {
+box-shadow: 0 0 30px var(–green), 0 0 60px rgba(57,255,20,0.4), inset 0 0 20px rgba(57,255,20,0.2);
+background: radial-gradient(circle, rgba(57,255,20,0.8) 0%, rgba(20,140,0,0.6) 50%, rgba(0,30,0,0.8) 100%);
+}
+@keyframes coreBreath { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
+.arc-label { font-size: 0.58rem; letter-spacing: 0.2em; color: rgba(255,107,0,0.55); }
+
+/* STATUS */
+.status-bar {
+width: 100%; display: flex; justify-content: space-between; align-items: center;
+padding: 8px 14px; border: 1px solid var(–border);
+background: var(–panel); backdrop-filter: blur(4px);
+}
+.status-left { display: flex; align-items: center; gap: 8px; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(–hud); box-shadow: var(–glow); animation: blink 1.5s ease-in-out infinite; }
+.status-dot.red { background: var(–red); box-shadow: 0 0 10px var(–red); }
+.status-dot.green { background: var(–green); box-shadow: 0 0 10px var(–green); }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.status-text { font-size: 0.62rem; letter-spacing: 0.13em; color: rgba(255,107,0,0.65); }
+
+.wave-bars { display: flex; gap: 3px; align-items: center; height: 28px; }
+.wave-bar { width: 3px; background: var(–green); border-radius: 2px; animation: waveDance 0.6s ease-in-out infinite; }
+.wave-bar:nth-child(1){animation-delay:0s} .wave-bar:nth-child(2){animation-delay:0.1s}
+.wave-bar:nth-child(3){animation-delay:0.2s} .wave-bar:nth-child(4){animation-delay:0.3s}
+.wave-bar:nth-child(5){animation-delay:0.4s}
+@keyframes waveDance { 0%,100%{height:4px} 50%{height:20px} }
+
+/* CONVERSATION */
+.conversation {
+width: 100%; min-height: 240px; max-height: 360px;
+overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+padding: 14px; border: 1px solid var(–border);
+background: var(–panel); backdrop-filter: blur(8px); scroll-behavior: smooth;
+}
+.conversation::-webkit-scrollbar { width: 3px; }
+.conversation::-webkit-scrollbar-thumb { background: rgba(255,107,0,0.25); border-radius: 2px; }
+
+.msg { display: flex; flex-direction: column; gap: 3px; animation: fadeSlide 0.4s ease; }
+@keyframes fadeSlide { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.msg-label { font-size: 0.52rem; letter-spacing: 0.2em; color: rgba(255,107,0,0.38); }
+.msg.user .msg-label { color: rgba(57,255,20,0.45); text-align: right; }
+.msg-bubble {
+padding: 9px 13px; border-left: 2px solid rgba(255,107,0,0.35);
+background: rgba(255,107,0,0.04); font-size: 0.82rem; line-height: 1.65;
+color: rgba(255,140,50,0.88); white-space: pre-wrap;
+}
+.msg.user .msg-bubble {
+border-left: none; border-right: 2px solid rgba(57,255,20,0.35);
+background: rgba(57,255,20,0.03); color: rgba(57,255,20,0.85); text-align: right;
+}
+.msg-bubble.typing::after { content:‘▌’; animation: cur 0.7s steps(1) infinite; }
+@keyframes cur { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* IMAGE GRID */
+.img-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.img-grid img {
+width: 110px; height: 82px; object-fit: cover;
+border: 1px solid var(–border); filter: saturate(0.8) brightness(0.9); transition: all 0.3s;
+}
+.img-grid img:hover { filter: saturate(1.2) brightness(1.1); border-color: var(–hud); }
+
+/* QUICK CMDS */
+.quick-cmds { width: 100%; display: flex; gap: 7px; flex-wrap: wrap; }
+.qcmd {
+padding: 5px 11px; background: transparent;
+border: 1px solid rgba(255,107,0,0.14); color: rgba(255,107,0,0.45);
+font-family: ‘Share Tech Mono’, monospace; font-size: 0.62rem; letter-spacing: 0.08em;
+cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent;
+}
+.qcmd:active { border-color: var(–hud); color: var(–hud); background: rgba(255,107,0,0.06); }
+
+/* INPUT */
+.input-area {
+position: fixed; bottom: 0; left: 0; right: 0;
+padding: 12px 14px; background: rgba(10,5,0,0.95);
+border-top: 1px solid var(–border); backdrop-filter: blur(10px);
+display: flex; gap: 8px; align-items: center; z-index: 10;
+}
+.input-wrap { flex: 1; position: relative; }
+.input-wrap::before {
+content: ‘>’; position: absolute; left: 12px; top: 50%;
+transform: translateY(-50%); color: var(–hud); font-size: 0.85rem; pointer-events: none;
+}
+input[type=“text”] {
+width: 100%; background: rgba(255,107,0,0.04); border: 1px solid var(–border);
+color: var(–hud); font-family: ‘Share Tech Mono’, monospace; font-size: 0.82rem;
+padding: 12px 12px 12px 28px; outline: none;
+-webkit-appearance: none; appearance: none; border-radius: 0;
+transition: border-color 0.3s;
+}
+input[type=“text”]:focus { border-color: var(–hud); box-shadow: var(–glow); }
+input[type=“text”]::placeholder { color: rgba(255,107,0,0.22); }
+
+.btn {
+padding: 12px 14px; background: transparent; border: 1px solid var(–border);
+color: var(–hud); font-family: ‘Orbitron’, sans-serif; font-size: 0.55rem;
+letter-spacing: 0.12em; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+-webkit-tap-highlight-color: transparent;
+}
+.btn:active { background: rgba(255,107,0,0.1); border-color: var(–hud); }
+.btn.mic { border-color: rgba(255,60,60,0.35); color: var(–red); }
+.btn.mic.active {
+background: rgba(255,60,60,0.15); border-color: var(–red);
+box-shadow: 0 0 20px rgba(255,60,60,0.5);
+animation: micPulse 0.8s ease-in-out infinite;
+}
+@keyframes micPulse { 0%,100%{box-shadow:0 0 20px rgba(255,60,60,0.5)} 50%{box-shadow:0 0 36px rgba(255,60,60,0.85)} }
+
+/* CORNERS */
+.corner-tl,.corner-tr,.corner-bl,.corner-br {
+position: fixed; width: 50px; height: 50px; pointer-events: none; z-index: 2; opacity: 0.35;
+}
+.corner-tl { top:10px; left:10px; border-top:2px solid var(–hud); border-left:2px solid var(–hud); }
+.corner-tr { top:10px; right:10px; border-top:2px solid var(–hud); border-right:2px solid var(–hud); }
+.corner-bl { bottom:70px; left:10px; border-bottom:2px solid var(–hud); border-left:2px solid var(–hud); }
+.corner-br { bottom:70px; right:10px; border-bottom:2px solid var(–hud); border-right:2px solid var(–hud); }
+
+.hidden { display: none !important; }
+</style>
+
+</head>
+<body>
+
+<div class="corner-tl"></div><div class="corner-tr"></div>
+<div class="corner-bl"></div><div class="corner-br"></div>
+
+<div class="wrapper">
+  <div class="header">
+    <div class="logo">M.E.N.C.H.O</div>
+    <div class="subtitle">Máquina Electrónica Neural Con Habla Órale</div>
+  </div>
+
+  <div class="flag-stripe"></div>
+
+  <div class="arc-container">
+    <div class="arc" id="arc" onclick="toggleMic()">
+      <div class="arc-ring"></div>
+      <div class="arc-ring"></div>
+      <div class="arc-ring"></div>
+      <div class="arc-core" id="arcCore">ÓRALE</div>
+    </div>
+    <div class="arc-label" id="arcLabel">TAP TO SPEAK</div>
+  </div>
+
+  <div class="status-bar">
+    <div class="status-left">
+      <div class="status-dot" id="statusDot"></div>
+      <span class="status-text" id="statusText">EN LÍNEA</span>
+    </div>
+    <div class="wave-bars hidden" id="waveBars">
+      <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div>
+    </div>
+    <span class="status-text" id="clockDisplay"></span>
+  </div>
+
+  <div class="conversation" id="conversation">
+    <div class="msg">
+      <div class="msg-label">MENCHO // INICIO</div>
+      <div class="msg-bubble">Órale, ya estoy aquí ese. MENCHO online — qué necesitas, ya sabes I got you.</div>
+    </div>
+  </div>
+
+  <div class="quick-cmds">
+    <button class="qcmd" onclick="quickSend('qué puedes hacer?')">QUÉ PUEDES HACER</button>
+    <button class="qcmd" onclick="quickSend('show me images of lowriders')">SHOW LOWRIDERS</button>
+    <button class="qcmd" onclick="quickSend('give me some motivation ese')">MOTIVAME</button>
+    <button class="qcmd" onclick="quickSend('what is AI?')">QUÉ ES AI</button>
+    <button class="qcmd" onclick="quickSend('tell me something interesting')">CUÉNTAME ALGO</button>
+  </div>
+</div>
+
+<div class="input-area">
+  <div class="input-wrap">
+    <input type="text" id="textInput" placeholder="Dime algo ese..." onkeydown="if(event.key==='Enter')sendMessage()" autocomplete="off" autocorrect="off" spellcheck="false" />
+  </div>
+  <button class="btn mic" id="micBtn" onclick="toggleMic()">🎤</button>
+  <button class="btn" onclick="sendMessage()">ÁNDALE</button>
+</div>
+
+<script>
+let isListening = false;
+let recognition = null;
+const synth = window.speechSynthesis;
+let voices = [];
+
+function loadVoices() { voices = synth.getVoices(); }
+synth.onvoiceschanged = loadVoices;
+loadVoices();
+
+setInterval(() => {
+  document.getElementById('clockDisplay').textContent =
+    new Date().toLocaleTimeString('en-US', { hour12: false });
+}, 1000);
+
+function setStatus(text, color) {
+  document.getElementById('statusText').textContent = text;
+  document.getElementById('statusDot').className = 'status-dot' + (color ? ' ' + color : '');
+}
+
+function speak(text) {
+  synth.cancel();
+  const clean = text.replace(/[*_#`]/g, '').substring(0, 500);
+  const utter = new SpeechSynthesisUtterance(clean);
+  loadVoices();
+  const v = voices.find(v => v.lang === 'es-MX' || v.lang === 'es-US')
+    || voices.find(v => v.lang.startsWith('es'))
+    || voices.find(v => v.lang.startsWith('en'))
+    || voices[0];
+  if (v) utter.voice = v;
+  utter.rate = 0.95; utter.pitch = 0.8; utter.volume = 1;
+
+  utter.onstart = () => {
+    document.getElementById('arcCore').className = 'arc-core speaking';
+    document.getElementById('arcCore').textContent = '🔥';
+    document.getElementById('arcLabel').textContent = 'HABLANDO...';
+    document.getElementById('waveBars').classList.remove('hidden');
+    setStatus('TRANSMITIENDO', 'green');
+  };
+  utter.onend = () => {
+    document.getElementById('arcCore').className = 'arc-core';
+    document.getElementById('arcCore').textContent = 'ÓRALE';
+    document.getElementById('arcLabel').textContent = 'TAP TO SPEAK';
+    document.getElementById('waveBars').classList.add('hidden');
+    setStatus('EN LÍNEA');
+  };
+  synth.speak(utter);
+}
+
+function toggleMic() { isListening ? stopListening() : startListening(); }
+
+function startListening() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { addMessage('mencho', 'Chale, voice not supported. Try Chrome ese.'); return; }
+  recognition = new SR();
+  recognition.lang = 'en-US';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.onstart = () => {
+    isListening = true;
+    document.getElementById('micBtn').classList.add('active');
+    document.getElementById('arcCore').className = 'arc-core listening';
+    document.getElementById('arcCore').textContent = '●';
+    document.getElementById('arcLabel').textContent = 'TE ESCUCHO...';
+    setStatus('ESCUCHANDO', 'red');
+  };
+  recognition.onresult = (e) => {
+    document.getElementById('textInput').value = e.results[0][0].transcript;
+    stopListening();
+    sendMessage();
+  };
+  recognition.onerror = recognition.onend = () => { if (isListening) stopListening(); };
+  recognition.start();
+}
+
+function stopListening() {
+  isListening = false;
+  if (recognition) recognition.stop();
+  document.getElementById('micBtn').classList.remove('active');
+  document.getElementById('arcCore').className = 'arc-core';
+  document.getElementById('arcCore').textContent = 'ÓRALE';
+  document.getElementById('arcLabel').textContent = 'TAP TO SPEAK';
+  setStatus('EN LÍNEA');
+}
+
+function addMessage(role, text, images) {
+  const conv = document.getElementById('conversation');
+  const div = document.createElement('div');
+  div.className = 'msg' + (role === 'user' ? ' user' : '');
+  const label = document.createElement('div');
+  label.className = 'msg-label';
+  label.textContent = role === 'user' ? 'TÚ' : 'MENCHO';
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.textContent = text;
+  div.appendChild(label);
+  div.appendChild(bubble);
+  if (images?.length) {
+    const grid = document.createElement('div');
+    grid.className = 'img-grid';
+    images.forEach(url => {
+      const img = document.createElement('img');
+      img.src = url; img.alt = 'visual';
+      img.onerror = () => img.remove();
+      grid.appendChild(img);
+    });
+    div.appendChild(grid);
+  }
+  conv.appendChild(div);
+  conv.scrollTop = conv.scrollHeight;
+}
+
+function addTyping() {
+  const conv = document.getElementById('conversation');
+  const div = document.createElement('div');
+  div.className = 'msg'; div.id = 'typing-msg';
+  const label = document.createElement('div');
+  label.className = 'msg-label'; label.textContent = 'MENCHO // PENSANDO...';
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble typing';
+  div.appendChild(label); div.appendChild(bubble);
+  conv.appendChild(div); conv.scrollTop = conv.scrollHeight;
+}
+function removeTyping() { document.getElementById('typing-msg')?.remove(); }
+
+function extractImageQuery(text) {
+  const m = text.match(/show\s+(?:me\s+)?(?:(?:images?|pictures?|photos?)\s+of\s+)?(.+)/i)
+    || text.match(/(?:images?|pictures?|photos?)\s+of\s+(.+)/i);
+  return m ? m[1].trim() : null;
+}
+function fetchImages(query) {
+  const q = encodeURIComponent(query);
+  return [
+    `https://source.unsplash.com/300x200/?${q}&sig=1`,
+    `https://source.unsplash.com/300x200/?${q}&sig=2`,
+    `https://source.unsplash.com/300x200/?${q}&sig=3`
+  ];
+}
+
+async function sendMessage() {
+  const input = document.getElementById('textInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addMessage('user', text);
+  setStatus('PROCESANDO...', 'green');
+  document.getElementById('arcCore').textContent = '...';
+  const imageQuery = extractImageQuery(text);
+  addTyping();
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text })
+    });
+    const data = await res.json();
+    removeTyping();
+    if (data.error) {
+      addMessage('mencho', `Chale, error ese: ${data.error}`);
+      setStatus('ERROR', 'red');
+      return;
+    }
+    const images = imageQuery ? fetchImages(imageQuery) : [];
+    addMessage('mencho', data.reply, images);
+    speak(data.reply);
+    setStatus('EN LÍNEA');
+    document.getElementById('arcCore').textContent = 'ÓRALE';
+  } catch (err) {
+    removeTyping();
+    addMessage('mencho', `No hay conexión ese: ${err.message}`);
+    setStatus('OFFLINE', 'red');
+    document.getElementById('arcCore').textContent = 'ERR';
+  }
+}
+
+function quickSend(text) {
+  document.getElementById('textInput').value = text;
+  sendMessage();
+}
+</script>
+
+</body>
+</html>
