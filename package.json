@@ -1,5 +1,5 @@
 {
-  "name": "jarvis-ai",
+  "name": "mencho-ai",
   "version": "1.0.0",
   "description": "JARVIS AI Assistant powered by Groq",
   "main": "api/chat.js",
